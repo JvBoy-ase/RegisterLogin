@@ -1,9 +1,11 @@
 package com.example.registerlogin.service;
 
+import com.example.registerlogin.model.RegisterRequest;
 import com.example.registerlogin.model.User;
 import com.example.registerlogin.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 
 import java.util.Optional;
 
@@ -20,13 +22,16 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    // Register user
-    public User registerUser(String username, String password) {
-        String hashedPassword = passwordEncoder.encode(password);
+    // ✅ Business logic for registering a new user
+    public User registerUser(RegisterRequest request) {
         User user = new User();
-        user.setUsername(username);
-        user.setPassword(hashedPassword);
-        return userRepository.save(user);
+        user.setUsername(request.getUsername());
+        user.setPassword(passwordEncoder.encode(request.getPassword())); // secure password
+        user.setEmail(request.getEmail());
+        user.setNumber(request.getNumber());
+        user.setAddress(request.getAddress());
+        user.setBirthdate(request.getBirthdate());
+        return userRepository.save(user); // saves into database
     }
 
     // Login user
