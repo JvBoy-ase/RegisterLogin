@@ -22,6 +22,20 @@ public class AuthController {
         this.userRepository = userRepository;
         this.jwtUtil = jwtUtil;
     }
+    
+    @GetMapping("/profile")
+    public User getProfile(@RequestHeader("Authorization") String authHeader) {
+        // 1. Remove "Bearer " prefix
+        String token = authHeader.replace("Bearer ", "");
+
+        // 2. Extract username from token
+        String username = jwtUtil.extractUsername(token);
+
+        // 3. Fetch user from DB
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
 
     // ✅ Register endpoint using RegisterRequest (extra fields supported)
     @PostMapping("/register")
